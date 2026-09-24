@@ -492,6 +492,10 @@
     </footer>
 
     <script>
+        // JSONbin.io კონფიგურაცია (შეცვალე შენი მონაცემებით!)
+        const BIN_ID = '6ab55f11ffd5d160532b3e21'; 
+        const ACCESS_KEY = '$2a$10$5Df.1fWVz4NhIJj9PiH0m.btEjHYDPy7dhRNbMLIdpsC/RLZc7RI6';
+
         const defaultProducts = [
             {
                 id: 'p1',
@@ -566,7 +570,7 @@
             }
         ];
 
-        let products = JSON.parse(localStorage.getItem('wood_products_v2')) || defaultProducts;
+        let products = [];
         let cart = JSON.parse(localStorage.getItem('wood_cart')) || [];
         let orders = JSON.parse(localStorage.getItem('wood_orders')) || [];
         let messages = JSON.parse(localStorage.getItem('wood_messages')) || [];
@@ -576,12 +580,48 @@
         let searchQuery = '';
         let activeAdminTab = 'products';
 
-        window.onload = function() {
-            saveState();
-            renderProducts();
+        // საიტის ჩატვირთვისას პროდუქტების წამოღება ღრუბლიდან (Bin-იდან)
+        window.onload = async function() {
+            await loadProductsFromCloud();
             updateCartBadge();
             updateAdminCounts();
         };
+
+        async function loadProductsFromCloud() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': ACCESS_KEY
+                    }
+                });
+                const data = await response.json();
+                if (data.record && data.record.products) {
+                    products = data.record.products;
+                } else {
+                    products = defaultProducts;
+                    await saveProductsToCloud();
+                }
+            } catch (error) {
+                console.error('შეცდომა ღრუბლიდან მონაცემების წამოღებისას:', error);
+                products = JSON.parse(localStorage.getItem('wood_products_v2')) || defaultProducts;
+            }
+            renderProducts();
+        }
+
+        async function saveProductsToCloud() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': ACCESS_KEY
+                    },
+                    body: JSON.stringify({ products: products })
+                });
+            } catch (error) {
+                console.error('შეცდომა ღრუბელში შენახვისას:', error);
+            }
+        }
 
         function saveState() {
             localStorage.setItem('wood_products_v2', JSON.stringify(products));
@@ -875,7 +915,6 @@
             document.getElementById('checkout-form').reset();
         }
 
-        // Product Details Modal with Thumbnail Gallery & Video Support
         function openProductView(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
@@ -888,7 +927,6 @@
             document.getElementById('modal-price').textContent = product.price + ' ლარი';
             document.getElementById('modal-desc').textContent = product.description;
 
-            // Render Thumbnails
             const thumbContainer = document.getElementById('modal-thumbnails');
             thumbContainer.innerHTML = '';
             images.forEach((imgUrl, idx) => {
@@ -903,7 +941,6 @@
                 thumbContainer.appendChild(thumb);
             });
 
-            // Handle Video
             const videoContainer = document.getElementById('modal-video-container');
             const videoWrapper = document.getElementById('modal-video-wrapper');
             if (product.videoUrl && product.videoUrl.trim() !== '') {
@@ -932,7 +969,7 @@
             const modal = document.getElementById('product-modal-view');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            document.getElementById('modal-video-wrapper').innerHTML = ''; // Stop video playback
+            document.getElementById('modal-video-wrapper').innerHTML = '';
         }
 
         function openContactModal() {
@@ -1154,7 +1191,7 @@
             }
         }
 
-        function processProductSave(id, title, price, category, images, videoUrl, description) {
+        async function processProductSave(id, title, price, category, images, videoUrl, description) {
             if (id) {
                 const prod = products.find(p => p.id === id);
                 if (prod) {
@@ -1171,11 +1208,12 @@
                     id: 'PROD-' + Date.now(),
                     title, price, category, images, videoUrl, description
                 };
-                products.unshift(newProd); // <--- unshift ამატებს სიის დასაწყისში
+                products.unshift(newProd); // ამატებს სიის დასაწყისში
                 showToast('პროდუქტი დაემატა');
             }
 
             saveState();
+            await saveProductsToCloud(); // ავტომატურად ინახავს JSONbin-ში
             closeProductModal();
             renderAdminProducts();
             renderProducts();
@@ -1200,9 +1238,10 @@
             modal.classList.add('flex');
         }
 
-        function deleteProduct(id) {
+        async function deleteProduct(id) {
             products = products.filter(p => p.id !== id);
             saveState();
+            await saveProductsToCloud(); // აახლებს ღრუბელს წაშლის შემდეგაც
             renderAdminProducts();
             renderProducts();
             showToast('პროდუქტი წაიშალა');
@@ -1246,6 +1285,3 @@
     </script>
 </body>
 </html>
-
-
-

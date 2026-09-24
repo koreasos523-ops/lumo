@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ka" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ხის სამყარო | ლაზერული ჭრის ნაკეთობები</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=BPG+Banner+GEL:wght@400;700&family=Fira+GO:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wood: {
+                            50: '#fdfbf7',
+                            100: '#f5efe6',
+                            200: '#e8dcce',
+                            300: '#d4c2ab',
+                            600: '#8c6d53',
+                            700: '#6f533d',
+                            800: '#594130',
+                            900: '#402e22',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Fira GO"', '"BPG Banner GEL"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Fira GO', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4c2ab; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-wood-50 text-wood-900 min-h-screen flex flex-col selection:bg-wood-200">
+
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-wood-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer py-3" onclick="switchView('shop')">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-wood-800 text-wood-100 flex items-center justify-center shadow-md text-xl sm:text-2xl font-bold">
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold tracking-tight text-wood-900">ხის სამყარო</h1>
+                    <p class="text-[10px] sm:text-xs text-wood-600 font-medium">ლაზერული ჭრის ხელოვნება</p>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Categories -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button onclick="filterCategory('ყველა')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-wood-800 text-white shadow-sm" data-cat="ყველა">ყველა</button>
+                <button onclick="filterCategory('საბავშვო')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100" data-cat="საბავშვო">საბავშვო</button>
+                <button onclick="filterCategory('სათამაშოები')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100" data-cat="სათამაშოები">სათამაშოები</button>
+                <button onclick="filterCategory('პაზლები')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100" data-cat="პაზლები">პაზლები</button>
+                <button onclick="filterCategory('დიზაინერული')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100" data-cat="დიზაინერული">დიზაინერული</button>
+                <button onclick="filterCategory('სახლისთვის')" class="cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100" data-cat="სახლისთვის">სახლისთვის</button>
+            </nav>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button onclick="openContactModal()" class="hidden md:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-wood-800 hover:bg-wood-100 transition-all border border-wood-200">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>მოგვწერეთ</span>
+                </button>
+
+                <button onclick="toggleCartModal()" class="relative p-2.5 sm:p-3 rounded-xl bg-wood-100 hover:bg-wood-200 text-wood-800 transition-all shadow-sm">
+                    <i class="fa-solid fa-cart-shopping text-base sm:text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[10px] sm:text-xs w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center font-bold shadow">0</span>
+                </button>
+
+                <button onclick="openAdminPortal()" id="admin-toggle-btn" class="flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-wood-800 text-white hover:bg-wood-900 shadow-md">
+                    <i class="fa-solid fa-lock text-[10px]"></i>
+                    <span class="hidden sm:inline">ადმინ პანელი</span>
+                    <span class="sm:hidden">ადმინი</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Categories Horizontal Bar -->
+        <div class="lg:hidden flex overflow-x-auto px-4 py-2 bg-wood-100/70 border-t border-wood-200 space-x-2 custom-scrollbar">
+            <button onclick="filterCategory('ყველა')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-wood-800 text-white shadow-sm" data-cat="ყველა">ყველა</button>
+            <button onclick="filterCategory('საბავშვო')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200" data-cat="საბავშვო">საბავშვო</button>
+            <button onclick="filterCategory('სათამაშოები')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200" data-cat="სათამაშოები">სათამაშოები</button>
+            <button onclick="filterCategory('პაზლები')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200" data-cat="პაზლები">პაზლები</button>
+            <button onclick="filterCategory('დიზაინერული')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200" data-cat="დიზაინერული">დიზაინერული</button>
+            <button onclick="filterCategory('სახლისთვის')" class="cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200" data-cat="სახლისთვის">სახლისთვის</button>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- SHOP VIEW -->
+        <div id="shop-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-wood-800 to-wood-900 text-white p-6 sm:p-10 lg:p-12 mb-8 sm:mb-12 shadow-xl flex flex-col md:flex-row items-center justify-between">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-8xl sm:text-9xl pointer-events-none">
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+                <div class="max-w-xl z-10 mb-6 md:mb-0">
+                    <span class="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-3 tracking-wider uppercase border border-amber-500/30">ეკოლოგიურად სუფთა ხე</span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3 sm:mb-4 leading-tight">უნიკალური ლაზერული ჭრის ნაკეთობები თქვენი სახლისთვის</h2>
+                    <p class="text-wood-200 text-sm sm:text-base mb-6 leading-relaxed">შეკვეთით ან მზა სახით: სათამაშოები, პაზლები, დიზაინერული აქსესუარები და საბავშვო ნივთები.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#products-section" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm sm:text-base font-semibold shadow-lg transition-all flex items-center space-x-2">
+                            <span>კატალოგის ნახვა</span>
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </a>
+                        <button onclick="openContactModal()" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm sm:text-base font-semibold border border-white/20 transition-all backdrop-blur-sm">
+                            ინდივიდუალური შეკვეთა
+                        </button>
+                    </div>
+                </div>
+                <div class="z-10 w-full md:w-auto flex justify-center">
+                    <div class="w-56 h-56 sm:w-72 sm:h-72 rounded-2xl overflow-hidden shadow-2xl border-4 border-wood-700/50 relative bg-wood-700 flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80" alt="Laser Wood Craft" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-wood-900/60 via-transparent to-transparent flex items-end p-4">
+                            <span class="text-xs text-wood-200 font-medium bg-black/40 px-3 py-1 rounded-lg backdrop-blur-md">100% ხარისხის გარანტია</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section Header & Search -->
+            <div id="products-section" class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4 border-b border-wood-200 pb-4">
+                <div>
+                    <h3 id="current-category-title" class="text-xl sm:text-2xl font-bold text-wood-900">ყველა პროდუქტი</h3>
+                    <p class="text-xs sm:text-sm text-wood-600 mt-0.5">აირჩიეთ და შეუკვეთეთ მარტივად</p>
+                </div>
+                <div class="w-full sm:w-auto flex items-center space-x-3">
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-wood-600">
+                            <i class="fa-solid fa-search text-xs"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="handleSearch()" placeholder="ძებნა პროდუქტებში..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-wood-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800 shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Dynamically populated product cards -->
+            </div>
+        </div>
+
+        <div id="admin-portal-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 hidden">
+            <!-- Admin Login Box -->
+            <div id="admin-login-card" class="max-w-md mx-auto bg-white rounded-3xl p-8 shadow-xl border border-wood-200">
+                <div class="text-center mb-6">
+                    <div class="w-14 h-14 bg-wood-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-wood-900">ადმინისტრაციის პანელი</h2>
+                    <p class="text-xs sm:text-sm text-wood-600 mt-1">სისტემაში შესასვლელად შეიყვანეთ პაროლი</p>
+                </div>
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">პაროლი</label>
+                        <input type="password" id="admin-password-input" required class="w-full px-4 py-3 rounded-xl border border-wood-200 text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="შეიყვანეთ პაროლი (admin123)">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-sm font-semibold shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <span>შესვლა პანელში</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <button type="button" onclick="switchView('shop')" class="w-full py-2.5 rounded-xl bg-wood-100 hover:bg-wood-200 text-wood-800 text-xs font-semibold transition-all">
+                        ← მთავარ გვერდზე დაბრუნება
+                    </button>
+                </form>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="admin-dashboard" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-wood-200 gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold">მართვის ცენტრი</span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-wood-900 mt-1">ადმინ პანელი</h2>
+                        <p class="text-xs sm:text-sm text-wood-600">მართეთ პროდუქტები, შეკვეთები და შეტყობინებები</p>
+                    </div>
+                    <div class="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+                        <button onclick="handleAdminLogout()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-red-50 hover:bg-red-100 text-red-600 transition-all flex items-center space-x-1.5">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span>გასვლა</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="flex overflow-x-auto space-x-2 bg-white p-2 rounded-2xl border border-wood-200 shadow-sm custom-scrollbar">
+                    <button onclick="switchAdminTab('products')" id="admin-tab-prod" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-wood-800 text-white shadow-sm transition-all whitespace-nowrap">პროდუქტები</button>
+                    <button onclick="switchAdminTab('orders')" id="admin-tab-ord" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-wood-100 text-wood-700 hover:bg-wood-200 transition-all whitespace-nowrap">შეკვეთები (<span id="orders-count-badge">0</span>)</button>
+                    <button onclick="switchAdminTab('messages')" id="admin-tab-msg" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-wood-100 text-wood-700 hover:bg-wood-200 transition-all whitespace-nowrap">შეტყობინებები (<span id="msgs-count-badge">0</span>)</button>
+                </div>
+
+                <!-- Tab 1: Products -->
+                <div id="admin-section-products" class="space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h3 class="text-base sm:text-lg font-bold text-wood-900">პროდუქტების სია და მართვა</h3>
+                        <button onclick="openProductModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-xs sm:text-sm font-semibold shadow-md flex items-center justify-center space-x-2 transition-all">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>ახალი პროდუქტის დამატება</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-wood-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-wood-100/70 text-wood-800 text-[10px] sm:text-xs uppercase font-semibold tracking-wider">
+                                        <th class="py-3 px-4 sm:px-6">ფოტო</th>
+                                        <th class="py-3 px-4 sm:px-6">დასახელება</th>
+                                        <th class="py-3 px-4 sm:px-6">კატეგორია</th>
+                                        <th class="py-3 px-4 sm:px-6">ფასი</th>
+                                        <th class="py-3 px-4 sm:px-6 text-right">მოქმედება</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-products-table" class="divide-y divide-wood-200 text-xs sm:text-sm">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Orders -->
+                <div id="admin-section-orders" class="space-y-6 hidden">
+                    <h3 class="text-base sm:text-lg font-bold text-wood-900">შემოსული შეკვეთები</h3>
+                    <div id="admin-orders-list" class="space-y-4">
+                    </div>
+                </div>
+
+                <!-- Tab 3: Messages -->
+                <div id="admin-section-messages" class="space-y-6 hidden">
+                    <h3 class="text-base sm:text-lg font-bold text-wood-900">მომხმარებელთა შეტყობინებები</h3>
+                    <div id="admin-messages-list" class="space-y-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 sm:p-6 border-b border-wood-200 flex items-center justify-between bg-wood-50">
+                <h3 class="text-base sm:text-lg font-bold text-wood-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-cart-shopping text-wood-700"></i>
+                    <span>თქვენი კალათა</span>
+                </h3>
+                <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-wood-200/60 hover:bg-wood-200 flex items-center justify-center text-wood-800 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="cart-items-container" class="p-5 sm:p-6 overflow-y-auto flex-grow divide-y divide-wood-200 space-y-4">
+            </div>
+            <div class="p-5 sm:p-6 border-t border-wood-200 bg-wood-50">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs sm:text-sm font-medium text-wood-600">სულ გადასახდელი:</span>
+                    <span id="cart-total-price" class="text-lg sm:text-xl font-extrabold text-wood-900">0 ლარი</span>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full py-3 sm:py-3.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-sm font-semibold shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <span>შეკვეთის გაფორმება</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 sm:p-6 border-b border-wood-200 flex items-center justify-between bg-wood-50">
+                <h3 class="text-base sm:text-lg font-bold text-wood-900">შეკვეთის დეტალები</h3>
+                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-wood-200/60 hover:bg-wood-200 flex items-center justify-center text-wood-800 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="checkout-form" onsubmit="submitOrder(event)" class="p-5 sm:p-6 overflow-y-auto flex-grow space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">სახელი და გვარი</label>
+                    <input type="text" id="order-name" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="მაგ: გიორგი ბერიძე">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ტელეფონის ნომერი</label>
+                    <input type="tel" id="order-phone" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="მაგ: +995 555 12 34 56">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">მისამართი / ქალაქი</label>
+                    <textarea id="order-address" required rows="2" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="ქალაქი, ქუჩა, სახლის/ბინის ნომერი"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">გადახდის მეთოდი</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                        <label class="border border-wood-200 rounded-xl p-3 flex items-center space-x-3 cursor-pointer hover:bg-wood-50 transition-all">
+                            <input type="radio" name="payment" value="ნაღდი ანგარიშსწორება" checked class="text-wood-800 focus:ring-wood-800">
+                            <span class="text-xs sm:text-sm font-medium">ადგილზე მიტანისას</span>
+                        </label>
+                        <label class="border border-wood-200 rounded-xl p-3 flex items-center space-x-3 cursor-pointer hover:bg-wood-50 transition-all">
+                            <input type="radio" name="payment" value="ბარათით გადახდა" class="text-wood-800 focus:ring-wood-800">
+                            <span class="text-xs sm:text-sm font-medium">ონლაინ ბარათით</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-wood-200">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-sm font-semibold shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <span>შეკვეთის დადასტურება</span>
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enhanced Product Details Modal with Thumbnail Gallery and Video Preview -->
+    <div id="product-modal-view" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+            <div class="md:w-1/2 bg-wood-100 p-4 flex flex-col justify-between overflow-y-auto">
+                <!-- Main Large Preview Image -->
+                <div class="w-full h-64 md:h-72 rounded-2xl overflow-hidden bg-wood-200 shadow-md relative mb-3">
+                    <img id="modal-main-img" src="" alt="Product" class="w-full h-full object-cover">
+                </div>
+                <!-- Thumbnail Gallery -->
+                <div id="modal-thumbnails" class="flex space-x-2 overflow-x-auto pb-2 custom-scrollbar">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+            <div class="md:w-1/2 p-5 sm:p-6 flex flex-col justify-between overflow-y-auto">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="modal-cat" class="px-3 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold"></span>
+                        <button onclick="closeProductViewModal()" class="w-8 h-8 rounded-full bg-wood-100 hover:bg-wood-200 flex items-center justify-center text-wood-800 transition-all">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <h3 id="modal-title" class="text-xl sm:text-2xl font-bold text-wood-900 mb-2"></h3>
+                    <div id="modal-price" class="text-lg sm:text-xl font-extrabold text-amber-600 mb-4"></div>
+                    <p id="modal-desc" class="text-wood-600 text-xs sm:text-sm leading-relaxed mb-4"></p>
+                    
+                    <!-- Video Container if available -->
+                    <div id="modal-video-container" class="mb-4 hidden">
+                        <p class="text-[10px] uppercase font-semibold text-wood-700 mb-1">ვიდეო მიმოხილვა:</p>
+                        <div id="modal-video-wrapper" class="w-full h-40 rounded-xl overflow-hidden bg-black shadow">
+                            <!-- Embedded video iframe or video element -->
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3 pt-4 border-t border-wood-200">
+                    <button id="modal-add-cart-btn" onclick="" class="w-full py-3 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-xs sm:text-sm font-semibold shadow-md transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>კალათაში დამატება</span>
+                    </button>
+                    <button id="modal-quick-buy-btn" onclick="" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold transition-all flex items-center justify-center space-x-2">
+                        <span>სწრაფი ყიდვა</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Add/Edit Product Modal with Multiple Photos & Video Link Support -->
+    <div id="admin-product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 sm:p-6 border-b border-wood-200 flex items-center justify-between bg-wood-50">
+                <h3 id="admin-modal-title" class="text-base sm:text-lg font-bold text-wood-900">ახალი პროდუქტის დამატება</h3>
+                <button onclick="closeProductModal()" class="w-8 h-8 rounded-full bg-wood-200/60 hover:bg-wood-200 flex items-center justify-center text-wood-800 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="admin-product-form" onsubmit="saveProduct(event)" class="p-5 sm:p-6 overflow-y-auto flex-grow space-y-4">
+                <input type="hidden" id="edit-prod-id">
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">პროდუქტის დასახელება</label>
+                    <input type="text" id="prod-title" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="მაგ: ხის დიზაინერული სანათი">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ფასი (ლარი)</label>
+                        <input type="number" id="prod-price" required min="1" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="მაგ: 45">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">კატეგორია</label>
+                        <select id="prod-category" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800 bg-white">
+                            <option value="საბავშვო">საბავშვო</option>
+                            <option value="სათამაშოები">სათამაშოები</option>
+                            <option value="პაზლები">პაზლები</option>
+                            <option value="დიზაინერული">დიზაინერული</option>
+                            <option value="სახლისთვის">სახლისთვის</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Multiple Photos input (Comma separated URLs or Upload files) -->
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ფოტოების ბმულები (მძიმეებით გამოყოფილი)</label>
+                    <textarea id="prod-images-input" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="https://image1.jpg, https://image2.jpg"></textarea>
+                    <p class="text-[10px] sm:text-xs text-wood-600 mt-1">ჩაწერეთ რამდენიმე ფოტოს ბმული მძიმით, ან ატვირთეთ ქვემოთ:</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ფოტოების ატვირთვა მოწყობილობიდან</label>
+                    <input type="file" id="prod-image-files" accept="image/*" multiple class="w-full px-3 py-2 rounded-xl border border-wood-200 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-wood-800 file:text-white hover:file:bg-wood-900 cursor-pointer bg-white">
+                </div>
+
+                <!-- Video Link Input -->
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ვიდეოს ბმული (YouTube / MP4)</label>
+                    <input type="url" id="prod-video-input" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">აღწერა</label>
+                    <textarea id="prod-desc" required rows="3" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="პროდუქტის დეტალური აღწერა..."></textarea>
+                </div>
+                <div class="pt-4 border-t border-wood-200">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-xs sm:text-sm font-semibold shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <span>შენახვა</span>
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-5 sm:p-6 border-b border-wood-200 flex items-center justify-between bg-wood-50">
+                <h3 class="text-base sm:text-lg font-bold text-wood-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-envelope text-wood-700"></i>
+                    <span>მოგვწერეთ შეტყობინება</span>
+                </h3>
+                <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-wood-200/60 hover:bg-wood-200 flex items-center justify-center text-wood-800 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="submitContactMessage(event)" class="p-5 sm:p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">თქვენი სახელი</label>
+                    <input type="text" id="contact-name" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="მაგ: თამარ წერეთელი">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">ელ-ფოსტა ან ტელეფონი</label>
+                    <input type="text" id="contact-info" required class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="ტელეფონი ან ემაილი">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-wood-700 uppercase mb-1">შეტყობინება / ინდივიდუალური შეკვეთა</label>
+                    <textarea id="contact-text" required rows="4" class="w-full px-4 py-2.5 rounded-xl border border-wood-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wood-800" placeholder="აღწერეთ სასურველი დიზაინი ან კითხვა..."></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-wood-800 hover:bg-wood-900 text-white text-xs sm:text-sm font-semibold shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <span>გაგზავნა</span>
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-wood-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 border border-wood-700 text-xs sm:text-sm">
+        <i class="fa-solid fa-circle-check text-amber-400 text-base"></i>
+        <span id="toast-message" class="font-medium">ოპერაცია წარმატებით დასრულდა</span>
+    </div>
+
+    <footer class="bg-wood-900 text-wood-200 pt-10 sm:pt-12 pb-8 mt-12 sm:mt-16 border-t border-wood-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs sm:text-sm">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center text-lg sm:text-xl font-bold">
+                        <i class="fa-solid fa-tree"></i>
+                    </div>
+                    <span class="text-base sm:text-lg font-bold text-white tracking-tight">ხის სამყარო</span>
+                </div>
+                <p class="text-wood-300 leading-relaxed">უმაღლესი სიზუსტის ლაზერული ჭრის ნაკეთობები, ეკოლოგიურად სუფთა ხის მასალისგან შეკვეთით და ადგილზე მიწოდებით.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-xs sm:text-sm uppercase tracking-wider">კატეგორიები</h4>
+                <ul class="space-y-2 text-wood-300">
+                    <li><button onclick="filterCategory('საბავშვო')" class="hover:text-amber-400 transition-colors">საბავშვო პროდუქცია</button></li>
+                    <li><button onclick="filterCategory('სათამაშოები')" class="hover:text-amber-400 transition-colors">ხის სათამაშოები</button></li>
+                    <li><button onclick="filterCategory('პაზლები')" class="hover:text-amber-400 transition-colors">პაზლები და კონსტრუქტორები</button></li>
+                    <li><button onclick="filterCategory('დიზაინერული')" class="hover:text-amber-400 transition-colors">დიზაინერული ნაკეთობები</button></li>
+                    <li><button onclick="filterCategory('სახლისთვის')" class="hover:text-amber-400 transition-colors">სახლის დეკორი</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-xs sm:text-sm uppercase tracking-wider">კონტაქტი</h4>
+                <p class="text-wood-300 mb-2"><i class="fa-solid fa-phone mr-2 text-amber-500"></i>+995 555 98 76 54</p>
+                <p class="text-wood-300 mb-2"><i class="fa-solid fa-envelope mr-2 text-amber-500"></i>info@woodworld.ge</p>
+                <p class="text-wood-300"><i class="fa-solid fa-location-dot mr-2 text-amber-500"></i>თბილისი, საქართველო</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-wood-800 text-center text-[10px] sm:text-xs text-wood-400">
+            &copy; 2026 ხის სამყარო. ყველა უფლება დაცულია.
+        </div>
+    </footer>
+
+    <script>
+        const defaultProducts = [
+            {
+                id: 'p1',
+                title: 'ხის მრავალსართულიანი სათამაშო სახლი',
+                category: 'საბავშვო',
+                price: 120,
+                images: [
+                    'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                description: 'ლაზერით გამოჭრილი ეკოლოგიურად სუფთა ფანტასტიკური სახლი ბავშვებისთვის, აწყობადი დეტალებით.'
+            },
+            {
+                id: 'p2',
+                title: '3D რუკა-პაზლი კედლისთვის',
+                category: 'პაზლები',
+                price: 85,
+                images: [
+                    'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: '',
+                description: 'მსოფლიოს დეტალური ხის 3D პაზლი კედლის სამაგრით. შესანიშნავი საჩუქარი დიზაინის მოყვარულთათვის.'
+            },
+            {
+                id: 'p3',
+                title: 'ინტერაქტიული ხის ლაბირინთი',
+                category: 'სათამაშოები',
+                price: 35,
+                images: [
+                    'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: '',
+                description: 'ლოგიკური ხის სათამაშო ბურთულებით, რომელიც ავითარებს მოტორულ უნარებს.'
+            },
+            {
+                id: 'p4',
+                title: 'დიზაინერული სანათი "ტყის სული"',
+                category: 'დიზაინერული',
+                price: 65,
+                images: [
+                    'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: '',
+                description: 'ხის ლაზერული გრავირებით დამზადებული მაგიდის სანათი რბილი განათებით.'
+            },
+            {
+                id: 'p5',
+                title: 'ხის ორგანიზატორი სამუშაო მაგიდისთვის',
+                category: 'სახლისთვის',
+                price: 45,
+                images: [
+                    'https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: '',
+                description: 'მრავალფუნქციური ორგანიზატორი კალმების, ტელეფონისა და ნოტებისთვის.'
+            },
+            {
+                id: 'p6',
+                title: 'ხის საგანმანათლებლო ანბანი',
+                category: 'საბავშვო',
+                price: 30,
+                images: [
+                    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80'
+                ],
+                videoUrl: '',
+                description: 'ქართული ანბანის ფერადი ხის ასოები ბავშვებისთვის სახალისო სწავლისთვის.'
+            }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('wood_products_v2')) || defaultProducts;
+        let cart = JSON.parse(localStorage.getItem('wood_cart')) || [];
+        let orders = JSON.parse(localStorage.getItem('wood_orders')) || [];
+        let messages = JSON.parse(localStorage.getItem('wood_messages')) || [];
+        let isAdminLoggedIn = localStorage.getItem('wood_admin_logged') === 'true';
+
+        let currentCategory = 'ყველა';
+        let searchQuery = '';
+        let activeAdminTab = 'products';
+
+        window.onload = function() {
+            saveState();
+            renderProducts();
+            updateCartBadge();
+            updateAdminCounts();
+        };
+
+        function saveState() {
+            localStorage.setItem('wood_products_v2', JSON.stringify(products));
+            localStorage.setItem('wood_cart', JSON.stringify(cart));
+            localStorage.setItem('wood_orders', JSON.stringify(orders));
+            localStorage.setItem('wood_messages', JSON.stringify(messages));
+            localStorage.setItem('wood_admin_logged', isAdminLoggedIn ? 'true' : 'false');
+        }
+
+        function switchView(viewName) {
+            const shopView = document.getElementById('shop-view');
+            const adminPortal = document.getElementById('admin-portal-view');
+
+            if (viewName === 'admin') {
+                shopView.classList.add('hidden');
+                adminPortal.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                if (isAdminLoggedIn) {
+                    document.getElementById('admin-login-card').classList.add('hidden');
+                    document.getElementById('admin-dashboard').classList.remove('hidden');
+                    renderAdminProducts();
+                    renderAdminOrders();
+                    renderAdminMessages();
+                } else {
+                    document.getElementById('admin-login-card').classList.remove('hidden');
+                    document.getElementById('admin-dashboard').classList.add('hidden');
+                }
+            } else {
+                shopView.classList.remove('hidden');
+                adminPortal.classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                renderProducts();
+            }
+        }
+
+        function openAdminPortal() {
+            switchView('admin');
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const pass = document.getElementById('admin-password-input').value;
+            if (pass === 'admin123') {
+                isAdminLoggedIn = true;
+                saveState();
+                showToast('წარმატებით შეხვედით ადმინ პანელში');
+                switchView('admin');
+            } else {
+                showToast('არასწორი პაროლია!');
+            }
+        }
+
+        function handleAdminLogout() {
+            isAdminLoggedIn = false;
+            saveState();
+            document.getElementById('admin-password-input').value = '';
+            switchView('shop');
+            showToast('გამოხვედით ადმინ პანელიდან');
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === category) {
+                    btn.className = 'cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-wood-800 text-white shadow-sm';
+                } else {
+                    btn.className = 'cat-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors text-wood-700 hover:bg-wood-100';
+                }
+            });
+
+            document.querySelectorAll('.cat-btn-m').forEach(btn => {
+                if(btn.dataset.cat === category) {
+                    btn.className = 'cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-wood-800 text-white shadow-sm';
+                } else {
+                    btn.className = 'cat-btn-m px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white text-wood-700 border border-wood-200';
+                }
+            });
+
+            document.getElementById('current-category-title').textContent = category === 'ყველა' ? 'ყველა პროდუქტი' : category;
+            renderProducts();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value.toLowerCase();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            let filtered = products.filter(p => {
+                const matchCat = currentCategory === 'ყველა' || p.category === currentCategory;
+                const matchSearch = p.title.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center">
+                        <div class="w-16 h-16 bg-wood-100 text-wood-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h4 class="text-base sm:text-lg font-bold text-wood-800">პროდუქტები ვერ მოიძებნა</h4>
+                        <p class="text-xs sm:text-sm text-wood-600 mt-1">სცადეთ სხვა კატეგორია ან საძიებო სიტყვა</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const coverImg = (p.images && p.images.length > 0) ? p.images[0] : 'https://placehold.co/600x400/f5efe6/594130?text=ხის+ნაკეთობა';
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-sm border border-wood-200 overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1';
+                card.innerHTML = `
+                    <div class="relative h-48 sm:h-56 bg-wood-100 overflow-hidden cursor-pointer" onclick="openProductView('${p.id}')">
+                        <img src="${coverImg}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.src='https://placehold.co/600x400/f5efe6/594130?text=ხის+ნაკეთობა'">
+                        <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-md text-wood-800 rounded-lg text-[10px] sm:text-xs font-semibold shadow-sm">${p.category}</span>
+                        ${p.images && p.images.length > 1 ? `<span class="absolute top-3 right-3 px-2 py-0.5 bg-black/60 text-white rounded-md text-[10px]"><i class="fa-solid fa-images mr-1"></i>${p.images.length}</span>` : ''}
+                    </div>
+                    <div class="p-4 sm:p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <h4 class="font-bold text-wood-900 text-sm sm:text-base mb-1 cursor-pointer hover:text-amber-700 transition-colors line-clamp-1" onclick="openProductView('${p.id}')">${p.title}</h4>
+                            <p class="text-xs text-wood-600 line-clamp-2 mb-4">${p.description}</p>
+                        </div>
+                        <div class="pt-3 border-t border-wood-100 flex items-center justify-between">
+                            <span class="text-base sm:text-lg font-extrabold text-amber-600">${p.price} ლარი</span>
+                            <div class="flex space-x-1.5 sm:space-x-2">
+                                <button onclick="quickBuy('${p.id}')" title="სწრაფი ყიდვა" class="px-2.5 py-1.5 sm:px-3 sm:py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-xl text-xs font-semibold transition-all">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </button>
+                                <button onclick="addToCart('${p.id}')" title="კალათაში დამატება" class="px-3 py-1.5 sm:px-3.5 sm:py-2 bg-wood-800 hover:bg-wood-900 text-white rounded-xl text-xs font-semibold transition-all shadow-sm">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                const coverImg = (product.images && product.images.length > 0) ? product.images[0] : '';
+                cart.push({ ...product, image: coverImg, qty: 1 });
+            }
+
+            saveState();
+            updateCartBadge();
+            showToast(`"${product.title}" დაემატა კალათაში`);
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-badge');
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            badge.textContent = totalCount;
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const isHidden = modal.classList.contains('hidden');
+            if (isHidden) {
+                renderCartItems();
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-wood-600">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-wood-300"></i>
+                        <p class="text-sm font-medium">თქვენი კალათა ცარიელია</p>
+                    </div>
+                `;
+                document.getElementById('cart-total-price').textContent = '0 ლარი';
+                return;
+            }
+
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between py-3 gap-3';
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.image}" alt="${item.title}" class="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl border border-wood-200" onerror="this.src='https://placehold.co/600x400/f5efe6/594130?text=ხის+ნაკეთობა'">
+                        <div>
+                            <h5 class="text-xs sm:text-sm font-bold text-wood-900 line-clamp-1">${item.title}</h5>
+                            <p class="text-[11px] text-wood-600">${item.price} ლარი × ${item.qty}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 sm:space-x-2">
+                        <button onclick="changeQty('${item.id}', 1)" class="w-6 h-6 sm:w-7 sm:h-7 bg-wood-100 hover:bg-wood-200 rounded-lg flex items-center justify-center text-wood-800 font-bold text-xs">+</button>
+                        <button onclick="changeQty('${item.id}', -1)" class="w-6 h-6 sm:w-7 sm:h-7 bg-wood-100 hover:bg-wood-200 rounded-lg flex items-center justify-center text-wood-800 font-bold text-xs">-</button>
+                        <button onclick="removeFromCart('${item.id}')" class="w-6 h-6 sm:w-7 sm:h-7 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg flex items-center justify-center ml-1"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('cart-total-price').textContent = total + ' ლარი';
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => i.id !== id);
+            }
+            saveState();
+            renderCartItems();
+            updateCartBadge();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            saveState();
+            renderCartItems();
+            updateCartBadge();
+        }
+
+        function quickBuy(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const coverImg = (product.images && product.images.length > 0) ? product.images[0] : '';
+            cart = [{ ...product, image: coverImg, qty: 1 }];
+            saveState();
+            updateCartBadge();
+            toggleCartModal();
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('კალათა ცარიელია!');
+                return;
+            }
+            toggleCartModal();
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('order-name').value;
+            const phone = document.getElementById('order-phone').value;
+            const address = document.getElementById('order-address').value;
+            const payment = document.querySelector('input[name="payment"]:checked').value;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            const newOrder = {
+                id: 'ORD-' + Date.now().toString().slice(-6),
+                date: new Date().toLocaleDateString('ka-GE', { hour: '2-digit', minute: '2-digit' }),
+                customer: { name, phone, address, payment },
+                items: [...cart],
+                total: total,
+                status: 'მუშავდება'
+            };
+
+            orders.unshift(newOrder);
+            cart = [];
+            saveState();
+            updateCartBadge();
+            updateAdminCounts();
+            closeCheckoutModal();
+            showToast('შეკვეთა წარმატებით გაიგზავნა! მალე დაგიკავშირდებით.');
+            document.getElementById('checkout-form').reset();
+        }
+
+        // Product Details Modal with Thumbnail Gallery & Video Support
+        function openProductView(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const images = (product.images && product.images.length > 0) ? product.images : ['https://placehold.co/600x400/f5efe6/594130?text=ხის+ნაკეთობა'];
+            
+            document.getElementById('modal-main-img').src = images[0];
+            document.getElementById('modal-cat').textContent = product.category;
+            document.getElementById('modal-title').textContent = product.title;
+            document.getElementById('modal-price').textContent = product.price + ' ლარი';
+            document.getElementById('modal-desc').textContent = product.description;
+
+            // Render Thumbnails
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = '';
+            images.forEach((imgUrl, idx) => {
+                const thumb = document.createElement('div');
+                thumb.className = `w-14 h-14 rounded-xl overflow-hidden cursor-pointer border-2 ${idx === 0 ? 'border-amber-600' : 'border-transparent'} flex-shrink-0 transition-all hover:opacity-80`;
+                thumb.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+                thumb.onclick = () => {
+                    document.getElementById('modal-main-img').src = imgUrl;
+                    Array.from(thumbContainer.children).forEach(t => t.classList.remove('border-amber-600'));
+                    thumb.classList.add('border-amber-600');
+                };
+                thumbContainer.appendChild(thumb);
+            });
+
+            // Handle Video
+            const videoContainer = document.getElementById('modal-video-container');
+            const videoWrapper = document.getElementById('modal-video-wrapper');
+            if (product.videoUrl && product.videoUrl.trim() !== '') {
+                videoContainer.classList.remove('hidden');
+                let embedUrl = product.videoUrl;
+                if (embedUrl.includes('watch?v=')) {
+                    embedUrl = embedUrl.replace('watch?v=', 'embed/');
+                } else if (embedUrl.includes('youtu.be/')) {
+                    embedUrl = embedUrl.replace('youtu.be/', 'www.youtube.com/embed/');
+                }
+                videoWrapper.innerHTML = `<iframe src="${embedUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                videoContainer.classList.add('hidden');
+                videoWrapper.innerHTML = '';
+            }
+
+            document.getElementById('modal-add-cart-btn').setAttribute('onclick', `addToCart('${product.id}'); closeProductViewModal();`);
+            document.getElementById('modal-quick-buy-btn').setAttribute('onclick', `quickBuy('${product.id}'); closeProductViewModal();`);
+
+            const modal = document.getElementById('product-modal-view');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProductViewModal() {
+            const modal = document.getElementById('product-modal-view');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('modal-video-wrapper').innerHTML = ''; // Stop video playback
+        }
+
+        function openContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitContactMessage(event) {
+            event.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const info = document.getElementById('contact-info').value;
+            const text = document.getElementById('contact-text').value;
+
+            const msg = {
+                id: 'MSG-' + Date.now().toString().slice(-6),
+                date: new Date().toLocaleDateString('ka-GE', { hour: '2-digit', minute: '2-digit' }),
+                name, info, text
+            };
+
+            messages.unshift(msg);
+            saveState();
+            updateAdminCounts();
+            closeContactModal();
+            showToast('შეტყობინება წარმატებით გაიგზავნა!');
+            event.target.reset();
+        }
+
+        function switchAdminTab(tab) {
+            activeAdminTab = tab;
+            ['products', 'orders', 'messages'].forEach(t => {
+                const btn = document.getElementById(`admin-tab-${t === 'products' ? 'prod' : t === 'orders' ? 'ord' : 'msg'}`);
+                const sec = document.getElementById(`admin-section-${t}`);
+                if (t === tab) {
+                    btn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-wood-800 text-white shadow-sm transition-all whitespace-nowrap';
+                    sec.classList.remove('hidden');
+                } else {
+                    btn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-wood-100 text-wood-700 hover:bg-wood-200 transition-all whitespace-nowrap';
+                    sec.classList.add('hidden');
+                }
+            });
+        }
+
+        function updateAdminCounts() {
+            document.getElementById('orders-count-badge').textContent = orders.length;
+            document.getElementById('msgs-count-badge').textContent = messages.length;
+        }
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table');
+            tbody.innerHTML = '';
+
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-wood-600">პროდუქტები არ მოიძებნა</td></tr>`;
+                return;
+            }
+
+            products.forEach(p => {
+                const cover = (p.images && p.images.length > 0) ? p.images[0] : '';
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-wood-50 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 sm:px-6">
+                        <img src="${cover}" alt="" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover border border-wood-200" onerror="this.src='https://placehold.co/600x400/f5efe6/594130?text=ხის+ნაკეთობა'">
+                    </td>
+                    <td class="py-3 px-4 sm:px-6 font-bold text-wood-900">${p.title}</td>
+                    <td class="py-3 px-4 sm:px-6"><span class="px-2.5 py-1 bg-wood-100 text-wood-800 rounded-lg text-xs font-semibold">${p.category}</span></td>
+                    <td class="py-3 px-4 sm:px-6 font-semibold text-amber-600">${p.price} ლარი</td>
+                    <td class="py-3 px-4 sm:px-6 text-right space-x-1 sm:space-x-2">
+                        <button onclick="editProduct('${p.id}')" class="px-2.5 py-1.5 bg-wood-100 hover:bg-wood-200 text-wood-800 rounded-lg text-xs font-semibold transition-all"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct('${p.id}')" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-all"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-list');
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-wood-200 text-center text-wood-600 text-sm">შემოსული შეკვეთები არ არის</div>`;
+                return;
+            }
+
+            orders.forEach(o => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-5 sm:p-6 rounded-2xl border border-wood-200 shadow-sm space-y-4';
+                let itemsHtml = o.items.map(i => `<li class="text-xs text-wood-700">• ${i.title} (${i.qty} ცალი) - ${i.price * i.qty} ლარი</li>`).join('');
+
+                div.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-wood-200 gap-2">
+                        <div>
+                            <span class="font-extrabold text-wood-900 text-sm sm:text-base">${o.id}</span>
+                            <span class="text-xs text-wood-500 ml-2">${o.date}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs font-semibold px-3 py-1.5 rounded-xl border border-wood-200 bg-wood-50 text-wood-800 focus:outline-none">
+                                <option value="მუშავდება" ${o.status === 'მუშავდება' ? 'selected' : ''}>მუშავდება</option>
+                                <option value="გზაშია" ${o.status === 'გზაშია' ? 'selected' : ''}>გზაშია</option>
+                                <option value="დასრულებული" ${o.status === 'დასრულებული' ? 'selected' : ''}>დასრულებული</option>
+                            </select>
+                            <button onclick="deleteOrder('${o.id}')" class="text-red-500 hover:text-red-700 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+                        <div>
+                            <p class="text-[10px] sm:text-xs text-wood-500 uppercase font-semibold mb-1">მომხმარებელი</p>
+                            <p class="font-bold text-wood-900">${o.customer.name}</p>
+                            <p class="text-wood-700">${o.customer.phone}</p>
+                            <p class="text-wood-600 text-xs mt-1">მის: ${o.customer.address}</p>
+                            <p class="text-wood-600 text-xs font-medium mt-1">გადახდა: ${o.customer.payment}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] sm:text-xs text-wood-500 uppercase font-semibold mb-1">შეკვეთილი ნივთები</p>
+                            <ul class="space-y-1 mb-2">${itemsHtml}</ul>
+                            <p class="font-extrabold text-amber-600 text-sm sm:text-base">სულ: ${o.total} ლარი</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderAdminMessages() {
+            const container = document.getElementById('admin-messages-list');
+            container.innerHTML = '';
+
+            if (messages.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-wood-200 text-center text-wood-600 text-sm">შეტყობინებები არ არის</div>`;
+                return;
+            }
+
+            messages.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-5 sm:p-6 rounded-2xl border border-wood-200 shadow-sm space-y-2';
+                div.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-wood-900 text-xs sm:text-sm">${m.name} <span class="text-[11px] font-normal text-wood-500">(${m.info})</span></span>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-[11px] text-wood-500">${m.date}</span>
+                            <button onclick="deleteMessage('${m.id}')" class="text-red-500 hover:text-red-700 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-wood-700 bg-wood-50 p-3.5 rounded-xl border border-wood-100">${m.text}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openProductModal() {
+            document.getElementById('admin-modal-title').textContent = 'ახალი პროდუქტის დამატება';
+            document.getElementById('admin-product-form').reset();
+            document.getElementById('edit-prod-id').value = '';
+            const modal = document.getElementById('admin-product-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('admin-product-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+            const id = document.getElementById('edit-prod-id').value;
+            const title = document.getElementById('prod-title').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const category = document.getElementById('prod-category').value;
+            const description = document.getElementById('prod-desc').value;
+            const videoUrl = document.getElementById('prod-video-input').value;
+            const imagesInputStr = document.getElementById('prod-images-input').value;
+            const fileInput = document.getElementById('prod-image-files');
+
+            let existingImages = ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80'];
+            if (id) {
+                const p = products.find(prod => prod.id === id);
+                if (p && p.images) existingImages = [...p.images];
+            }
+
+            let finalImages = [];
+            if (imagesInputStr.trim() !== '') {
+                finalImages = imagesInputStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            }
+
+            if (fileInput.files && fileInput.files.length > 0) {
+                let readersLoaded = 0;
+                let uploadedImages = [];
+                Array.from(fileInput.files).forEach((file, idx) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedImages[idx] = e.target.result;
+                        readersLoaded++;
+                        if (readersLoaded === fileInput.files.length) {
+                            if (finalImages.length === 0) {
+                                finalImages = uploadedImages;
+                            } else {
+                                finalImages = finalImages.concat(uploadedImages);
+                            }
+                            processProductSave(id, title, price, category, finalImages, videoUrl, description);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                if (finalImages.length === 0) {
+                    finalImages = existingImages;
+                }
+                processProductSave(id, title, price, category, finalImages, videoUrl, description);
+            }
+        }
+
+        function processProductSave(id, title, price, category, images, videoUrl, description) {
+            if (id) {
+                const prod = products.find(p => p.id === id);
+                if (prod) {
+                    prod.title = title;
+                    prod.price = price;
+                    prod.category = category;
+                    prod.images = images;
+                    prod.videoUrl = videoUrl;
+                    prod.description = description;
+                }
+                showToast('პროდუქტი განახლდა');
+            } else {
+                const newProd = {
+                    id: 'PROD-' + Date.now(),
+                    title, price, category, images, videoUrl, description
+                };
+                products.unshift(newProd); // <--- unshift ამატებს სიის დასაწყისში
+                showToast('პროდუქტი დაემატა');
+            }
+
+            saveState();
+            closeProductModal();
+            renderAdminProducts();
+            renderProducts();
+        }
+
+        function editProduct(id) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+
+            document.getElementById('admin-modal-title').textContent = 'პროდუქტის რედაქტირება';
+            document.getElementById('edit-prod-id').value = prod.id;
+            document.getElementById('prod-title').value = prod.title;
+            document.getElementById('prod-price').value = prod.price;
+            document.getElementById('prod-category').value = prod.category;
+            document.getElementById('prod-desc').value = prod.description;
+            document.getElementById('prod-video-input').value = prod.videoUrl || '';
+            document.getElementById('prod-images-input').value = prod.images ? prod.images.join(', ') : '';
+            document.getElementById('prod-image-files').value = '';
+
+            const modal = document.getElementById('admin-product-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            saveState();
+            renderAdminProducts();
+            renderProducts();
+            showToast('პროდუქტი წაიშალა');
+        }
+
+        function updateOrderStatus(id, status) {
+            const order = orders.find(o => o.id === id);
+            if (order) {
+                order.status = status;
+                saveState();
+                showToast('შეკვეთის სტატუსი განახლდა');
+            }
+        }
+
+        function deleteOrder(id) {
+            orders = orders.filter(o => o.id !== id);
+            saveState();
+            renderAdminOrders();
+            updateAdminCounts();
+            showToast('შეკვეთა წაიშალა');
+        }
+
+        function deleteMessage(id) {
+            messages = messages.filter(m => m.id !== id);
+            saveState();
+            renderAdminMessages();
+            updateAdminCounts();
+            showToast('შეტყობინება წაიშალა');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+
+
